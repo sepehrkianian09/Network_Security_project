@@ -9,7 +9,7 @@ class Sender(ABC):
 
 class Socket(Sender):
     @abstractmethod
-    def receive(self, message_size):
+    def receive(self, message_size: int) -> str:
         pass
 
 
