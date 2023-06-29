@@ -17,7 +17,10 @@ class NetworkSocket(Socket):
         self.__socket.sendall(message.encode(self.encode_format))
 
     def receive(self, __bufsize: int) -> str:
-        return self.__socket.recv(__bufsize).decode(self.encode_format, "strict")
+        try:
+            return self.__socket.recv(__bufsize).decode(self.encode_format, "strict")
+        except:
+            return ""
 
     def connect(self, HOST: str, PORT: int):
         self.__socket.connect((HOST, PORT))

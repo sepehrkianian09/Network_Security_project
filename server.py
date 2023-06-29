@@ -11,9 +11,14 @@ def main():
         connection, address = socket.accept()
         connection = NetworkSocket(connection)
         with connection:
-            received_message = connection.receive(1024)
-            print(f"received message {received_message}")
-            connection.send(received_message)
+            while True:
+                received_message = connection.receive(1024)
+                if received_message:
+                    print(f"received message {received_message}")
+                    connection.send(received_message)
+                else:
+                    break
+
 
 if __name__ == "__main__":
     main()
