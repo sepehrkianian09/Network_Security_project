@@ -1,3 +1,5 @@
+import socket
+import threading
 from typing import Tuple
 from handshaking.server import ServerHandShaker
 from key_holder import SecureKeyHolder
@@ -21,23 +23,26 @@ class Server:
                 print(f"received message {received_message}")
 
 
+key_holder = SecureKeyHolder()
+
+
+def handle_client(client_socket: socket.socket):
+    with client_socket:
+        networked_socket = NetworkSocket(client_socket)
+        handshaker = ServerHandShaker(socket=networked_socket, key_holder=key_holder)
+        handshaker.run_handshaking()
+        concrete_socket = SecureSocket(key_holder=key_holder, socket=networked_socket)
+        Server(concrete_socket).run()
+
+
 def main(args: Tuple[str, int]):
     HOST, PORT = args
-    key_holder = SecureKeyHolder()
-    with create_socket() as socket:
-        socket.bind((HOST, PORT))
-        socket.listen()
-        connection, address = socket.accept()
-        with connection:
-            networked_socket = NetworkSocket(connection)
-            handshaker = ServerHandShaker(
-                socket=networked_socket, key_holder=key_holder
-            )
-            handshaker.run_handshaking()
-            concrete_socket = SecureSocket(
-                key_holder=key_holder, socket=networked_socket
-            )
-            Server(concrete_socket).run()
+    with create_socket() as server_socket:
+        server_socket.bind((HOST, PORT))
+        server_socket.listen()
+        while True:
+            client_socket, address = server_socket.accept()
+            threading.Thread(target=handle_client, args=[client_socket]).start()
 
 
 if __name__ == "__main__":
