@@ -1,9 +1,9 @@
 from .client import Client
-from .key_holder import SecureKeyHolder
-from .message_receiver import SecureMessageReceiver
-from .message_sender import SecureMessageSender
-from .handshaker import HandShaker
-from .socket_creator import create_socket
+from ..key_holder import SecureKeyHolder
+from message_passing.message_receiver import SecureMessageReceiver
+from message_passing.message_sender import SecureMessageSender
+from handshaking.client import HandShaker
+from ..sockets.interfaces import create_socket
 
 
 def main():

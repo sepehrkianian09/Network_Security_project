@@ -1,4 +1,4 @@
-from client.key_holder import KeyHolder
+from key_holder import KeyHolder
 
 
 class HandShaker:
