@@ -23,15 +23,3 @@ class DecoratorSocket(Socket):
 
     def receive(self, message_size):
         return self.__socket.receive(message_size)
-
-
-class MessageListener(ABC):
-    @abstractmethod
-    def listen(self, message):
-        pass
-
-
-class ConcurrentSocket(Sender):
-    @abstractmethod
-    def start_broadcasting_received_messages(self, listener: "MessageListener"):
-        pass
