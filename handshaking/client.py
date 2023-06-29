@@ -1,11 +1,11 @@
 from key_holder import KeyHolder
-from sockets.interfaces import DecoratorSocket, Socket
+from sockets.interfaces import Socket
 
 
-class HandShaker(DecoratorSocket):
+class ClientHandShaker:
     def __init__(self, socket: "Socket", key_holder: KeyHolder) -> None:
-        super().__init__(socket)
+        self.socket = socket
         self.__key_holder = key_holder
 
-    def start_handshaking(self):
+    def run_handshaking(self):
         pass
