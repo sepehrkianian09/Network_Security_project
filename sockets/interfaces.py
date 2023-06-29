@@ -1,10 +1,6 @@
 from abc import ABC, abstractmethod, abstractproperty
 
 
-def create_socket():
-    pass
-
-
 class Sender(ABC):
     @abstractmethod
     def send(self, message):
