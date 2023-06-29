@@ -3,6 +3,10 @@ from typing import Optional
 from sockets.interfaces import Socket
 
 
+def create_socket() -> socket.socket:
+    return socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+
 class NetworkSocket(Socket):
     encode_format = "UTF-8"
 
@@ -11,7 +15,7 @@ class NetworkSocket(Socket):
         if __socket:
             self.__socket = __socket
         else:
-            self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.__socket = create_socket()
 
     def send(self, message: str):
         self.__socket.sendall(message.encode(self.encode_format))
@@ -21,22 +25,3 @@ class NetworkSocket(Socket):
             return self.__socket.recv(__bufsize).decode(self.encode_format, "strict")
         except:
             return ""
-
-    def connect(self, HOST: str, PORT: int):
-        self.__socket.connect((HOST, PORT))
-
-    def bind(self, HOST: str, PORT: int):
-        self.__socket.bind((HOST, PORT))
-
-    def listen(self):
-        self.__socket.listen()
-
-    def accept(self):
-        return self.__socket.accept()
-
-    def __enter__(self):
-        self.__socket.__enter__()
-        return self
-
-    def __exit__(self, *args):
-        self.__socket.__exit__(self, args)

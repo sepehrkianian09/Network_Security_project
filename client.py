@@ -3,8 +3,9 @@ from typing import Tuple
 from handshaking.client import ClientHandShaker
 from key_holder import SecureKeyHolder
 from sockets.interfaces import Socket
-from sockets.network import NetworkSocket
+from sockets.network import NetworkSocket, create_socket
 from sockets.secure import SecureSocket
+
 
 class Client:
     def __init__(self, socket: "Socket") -> None:
@@ -39,13 +40,15 @@ class Client:
 def main(args: Tuple[str, int]):
     HOST, PORT = args
     key_holder = SecureKeyHolder()
-    socket = NetworkSocket()
+    socket = create_socket()
     with socket:
-        socket.connect(HOST=HOST, PORT=PORT)
-        handshaker = ClientHandShaker(socket=socket, key_holder=key_holder)
+        socket.connect((HOST, PORT))
+        networked_socket = NetworkSocket(socket)
+        handshaker = ClientHandShaker(key_holder=key_holder, socket=networked_socket)
         handshaker.run_handshaking()
-        concrete_socket = SecureSocket(key_holder=key_holder, socket=socket)
+        concrete_socket = SecureSocket(key_holder=key_holder, socket=networked_socket)
         Client(socket=concrete_socket).run()
+
 
 if __name__ == "__main__":
     main(("127.0.0.1", 65432))

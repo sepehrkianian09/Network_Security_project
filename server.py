@@ -2,7 +2,7 @@ from typing import Tuple
 from handshaking.server import ServerHandShaker
 from key_holder import SecureKeyHolder
 from sockets.interfaces import Socket
-from sockets.network import NetworkSocket
+from sockets.network import NetworkSocket, create_socket
 from sockets.secure import SecureSocket
 
 
@@ -24,15 +24,19 @@ class Server:
 def main(args: Tuple[str, int]):
     HOST, PORT = args
     key_holder = SecureKeyHolder()
-    with NetworkSocket() as socket:
-        socket.bind(HOST=HOST, PORT=PORT)
+    with create_socket() as socket:
+        socket.bind((HOST, PORT))
         socket.listen()
         connection, address = socket.accept()
-        connection = NetworkSocket(connection)
         with connection:
-            handshaker = ServerHandShaker(socket=connection, key_holder=key_holder)
+            networked_socket = NetworkSocket(connection)
+            handshaker = ServerHandShaker(
+                socket=networked_socket, key_holder=key_holder
+            )
             handshaker.run_handshaking()
-            concrete_socket = SecureSocket(key_holder=key_holder, socket=connection)
+            concrete_socket = SecureSocket(
+                key_holder=key_holder, socket=networked_socket
+            )
             Server(concrete_socket).run()
 
 
