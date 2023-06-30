@@ -5,7 +5,7 @@ from handshaking.client import ClientHandShaker
 from key_holder import SecureKeyHolder
 from menu.login_register import LoginRegisterMenu
 from sockets.interfaces import Socket
-from sockets.json import JsonSocket
+from sockets.message import MessageSocket
 from sockets.network import NetworkSocket, create_socket
 from sockets.secure import SecureSocket
 from thread_pool import ThreadPool
@@ -37,7 +37,7 @@ def create_concrete_socket(socket: socket.socket) -> "Socket":
     handshaker = ClientHandShaker(key_holder=key_holder, socket=networked_socket)
     handshaker.run_handshaking()
     concrete_socket = SecureSocket(key_holder=key_holder, socket=networked_socket)
-    concrete_socket = JsonSocket(concrete_socket)
+    # concrete_socket = MessageSocket(concrete_socket)
     return concrete_socket
 
 

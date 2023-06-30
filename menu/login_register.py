@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, List
 from menu.interfaces import Menu, MenuHandler
+from messaging import Request, RequestType, Response, ResponseType
 
 if TYPE_CHECKING:
     from client import Client
@@ -17,10 +18,17 @@ class LoginRegisterMenu(Menu):
         pass
 
     def register(self):
-        print("please enter username: ")
-        username = input()
-        print("please enter password: ")
-        password = input()
         self.client.other_socket.send(
-            {"type": "register", "data": {"username": username, "password": password}}
+            Request(
+                type=RequestType.register,
+                data={
+                    "username": self.get_input("username"),
+                    "password": self.get_input("password"),
+                },
+            ).to_json()
         )
+        response: "Response" = Response.schema().loads(
+            self.client.other_socket.receive(1024)
+        )
+        if response.type == ResponseType.success:
+            print("client: Register Successful!")

@@ -7,7 +7,7 @@ from key_holder import SecureKeyHolder
 from handler.login_handler import LoginHandler
 from handler.other_handler import OtherHandler
 from sockets.interfaces import Socket
-from sockets.json import JsonSocket
+from sockets.message import MessageSocket
 from sockets.network import NetworkSocket, create_socket
 from sockets.secure import SecureSocket
 from thread_pool import ThreadPool
@@ -29,7 +29,7 @@ def handle_other_request(client_socket: socket.socket):
         handshaker = ServerHandShaker(socket=networked_socket, key_holder=key_holder)
         handshaker.run_handshaking()
         concrete_socket = SecureSocket(key_holder=key_holder, socket=networked_socket)
-        concrete_socket = JsonSocket(concrete_socket)
+        # concrete_socket = MessageSocket(concrete_socket)
         OtherHandler(concrete_socket).run()
 
 

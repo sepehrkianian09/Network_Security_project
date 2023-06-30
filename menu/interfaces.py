@@ -28,3 +28,7 @@ class Menu(ABC):
                 self.menu_items[selected_menu].handler()
         except:
             print("Invalid Input")
+
+    def get_input(self, input_name: str) -> str:
+        print(f"please enter {input_name}: ")
+        return input()

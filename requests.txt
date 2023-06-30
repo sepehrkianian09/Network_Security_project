@@ -1,0 +1,13 @@
+register: data{User pass}
+Login: data{User pass} -> Token
+Show Online Users: header{Token}
+Send Message: header{Token} data{Message}
+Show Received Messages: //
+Create Group: header{Token} data{group_name}
+Show Groups: header{Token}
+Enter Group: header{Token} data{group_name}
+logout: header{Token}
+* Add User: header{Token} data{group_name, username}
+show chats: header{Token} data{group_name}
+send message: header{Token} data{group_name, message}
+back: //
