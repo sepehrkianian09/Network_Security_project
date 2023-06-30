@@ -5,6 +5,7 @@ from key_holder import SecureKeyHolder
 from sockets.interfaces import Socket
 from sockets.network import NetworkSocket, create_socket
 from sockets.secure import SecureSocket
+from thread_pool import ThreadPool
 
 
 class Client:
@@ -13,12 +14,12 @@ class Client:
         self.sent_messages: str = ""
 
     def run(self):
-        read_thread = threading.Thread(target=self.read_messages, args=())
-        write_thread = threading.Thread(target=self.write_messages, args=())
-        read_thread.start()
-        write_thread.start()
-        write_thread.join()
-        read_thread.join()
+        ThreadPool(
+            threads=[
+                threading.Thread(target=self.write_messages, args=()),
+                threading.Thread(target=self.read_messages, args=()),
+            ]
+        ).run()
         print(f"sent_messages: {self.sent_messages}")
 
     def read_messages(self):
