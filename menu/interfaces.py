@@ -9,28 +9,22 @@ if TYPE_CHECKING:
 @dataclass
 class MenuHandler:
     name: str
-    handler: Callable[[], "Menu"]
+    handler: Callable[[], None]
 
 
 class Menu(ABC):
     def __init__(self, client: "Client") -> None:
         super().__init__()
         self.client = client
+        self.menu_items = []
 
-    @property
-    @abstractmethod
-    def menu_items(self) -> List[MenuHandler]:
-        pass
-
-    def render(self) -> "Menu":
+    def render(self):
         for i, menu_item in enumerate(self.menu_items):
             print(f"{i}. {menu_item.name}")
 
         try:
             selected_menu = int(input())
             if 0 <= selected_menu < len(self.menu_items):
-                return self.menu_items[selected_menu].handler()
+                self.menu_items[selected_menu].handler()
         except:
             print("Invalid Input")
-
-        return self

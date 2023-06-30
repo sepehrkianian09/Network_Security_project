@@ -20,9 +20,12 @@ class Client:
         self.other_socket = other_socket
         self.menu: "Menu" = LoginRegisterMenu(self)
 
+    def menu_transition(self, menu: "Menu"):
+        self.menu = menu
+
     def run(self):
         while True:
-            self.menu = self.menu.render()
+            self.menu.render()
 
 
 key_holder = SecureKeyHolder()
