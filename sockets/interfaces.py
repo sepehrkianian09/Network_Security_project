@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod, abstractproperty
+from typing import Any
 
 
 class Socket(ABC):
@@ -7,7 +8,7 @@ class Socket(ABC):
         pass
 
     @abstractmethod
-    def receive(self, message_size: int) -> str:
+    def receive(self, message_size: int) -> Any:
         pass
 
     @abstractmethod

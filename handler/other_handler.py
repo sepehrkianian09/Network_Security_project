@@ -6,4 +6,8 @@ class OtherHandler:
         self.socket = socket
 
     def run(self):
-        pass
+        message: dict = self.socket.receive(1024)
+        if message["type"] == "register":
+            print(
+                f"server: registered {message['data']['username']} with password {message['data']['password']}."
+            )

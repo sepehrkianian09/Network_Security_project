@@ -17,4 +17,10 @@ class LoginRegisterMenu(Menu):
         pass
 
     def register(self):
-        pass
+        print("please enter username: ")
+        username = input()
+        print("please enter password: ")
+        password = input()
+        self.client.other_socket.send(
+            {"type": "register", "data": {"username": username, "password": password}}
+        )
