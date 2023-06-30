@@ -10,14 +10,21 @@ class Socket(ABC):
     def receive(self, message_size: int) -> str:
         pass
 
+    @abstractmethod
+    def __exit__(self):
+        pass
+
 
 class DecoratorSocket(Socket):
     def __init__(self, __socket: "Socket") -> None:
         super().__init__()
-        self.__socket = __socket
+        self.__socket__ = __socket
 
     def send(self, message):
-        return self.__socket.send(message)
+        return self.__socket__.send(message)
 
     def receive(self, message_size):
-        return self.__socket.receive(message_size)
+        return self.__socket__.receive(message_size)
+
+    def __exit__(self):
+        return self.__socket__.__exit__()

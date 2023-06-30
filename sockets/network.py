@@ -25,3 +25,6 @@ class NetworkSocket(Socket):
             return self.__socket.recv(__bufsize).decode(self.encode_format, "strict")
         except:
             return ""
+
+    def __exit__(self):
+        return self.__socket.__exit__()

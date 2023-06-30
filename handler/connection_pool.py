@@ -20,10 +20,20 @@ class ConnectionPool:
         self.pool_map: Dict[ID_TYPE, "Socket"] = {}
 
     def add_connection(self, id: ID_TYPE, socket: "Socket"):
-        pass
+        if self.contains_connection(id):
+            self.remove_connection(id)
+        self.pool_map[id] = socket
 
     def get_connection(self, id: ID_TYPE) -> "Socket":
-        return self.pool_map[id]
+        if self.contains_connection(id):
+            return self.pool_map[id]
+        else:
+            raise Exception()
 
     def remove_connection(self, id: ID_TYPE):
-        pass
+        if self.contains_connection(id):
+            removed_socket = self.pool_map.pop(id)
+            removed_socket.__exit__()
+
+    def contains_connection(self, id: ID_TYPE) -> bool:
+        return id in self.pool_map
