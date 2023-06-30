@@ -1,6 +1,7 @@
 import socket
 import threading
 from typing import Callable, Tuple
+from config import Config, main_config
 from handshaking.server import ServerHandShaker
 from key_holder import SecureKeyHolder
 from server.login_handler import LoginHandler
@@ -39,18 +40,18 @@ def start_handling(host: str, port: int, handler: Callable[[socket.socket], None
             threading.Thread(target=handler, args=[client_socket]).start()
 
 
-def main(host: str, login_port: int, other_port: int):
+def main(config: "Config"):
     ThreadPool(
         threads=[
             threading.Thread(
-                target=start_handling, args=[host, login_port, handle_login_request]
+                target=start_handling, args=[config.host, config.login_port, handle_login_request]
             ),
             threading.Thread(
-                target=start_handling, args=[host, other_port, handle_other_request]
+                target=start_handling, args=[config.host, config.other_port, handle_other_request]
             ),
         ]
     ).run()
 
 
 if __name__ == "__main__":
-    main(host="127.0.0.1", login_port=65432, other_port=65433)
+    main(main_config)

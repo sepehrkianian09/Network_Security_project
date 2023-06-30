@@ -8,6 +8,7 @@ from sockets.interfaces import Socket
 from sockets.network import NetworkSocket, create_socket
 from sockets.secure import SecureSocket
 from thread_pool import ThreadPool
+from config import Config, main_config
 
 if TYPE_CHECKING:
     from menu.interfaces import Menu
@@ -15,7 +16,8 @@ if TYPE_CHECKING:
 
 class Client:
     def __init__(self, login_socket: "Socket", other_socket: "Socket") -> None:
-        self.socket = socket
+        self.login_socket = login_socket
+        self.other_socket = other_socket
         self.menu: "Menu" = LoginRegisterMenu(self)
 
     def run(self):
@@ -34,11 +36,11 @@ def create_concrete_socket(socket: socket.socket) -> "Socket":
     return concrete_socket
 
 
-def main(host: str, login_port: int, other_port: int):
+def main(config: "Config"):
     login_socket = create_socket()
-    login_socket.connect((host, login_port))
+    login_socket.connect((config.host, config.login_port))
     other_socket = create_socket()
-    other_socket.connect((host, other_port))
+    other_socket.connect((config.host, config.other_port))
     with login_socket:
         with other_socket:
             login_concrete_socket = create_concrete_socket(login_socket)
@@ -49,4 +51,4 @@ def main(host: str, login_port: int, other_port: int):
 
 
 if __name__ == "__main__":
-    main(host="127.0.0.1", login_port=65432, other_port=65433)
+    main(config=main_config)
