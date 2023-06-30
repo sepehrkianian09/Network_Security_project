@@ -4,7 +4,7 @@ from sockets.interfaces import DecoratorSocket, Socket
 MESSAGE_TYPE = str
 
 
-class SecureSocket(DecoratorSocket, Socket):
+class SecureSocket(DecoratorSocket):
     def __init__(self, key_holder: KeyHolder, socket: "Socket") -> None:
         super().__init__(socket)
         self.__key_holder = key_holder

@@ -4,8 +4,8 @@ from typing import Callable, Tuple
 from config import Config, main_config
 from handshaking.server import ServerHandShaker
 from key_holder import SecureKeyHolder
-from server.login_handler import LoginHandler
-from server.other_handler import OtherHandler
+from handler.login_handler import LoginHandler
+from handler.other_handler import OtherHandler
 from sockets.interfaces import Socket
 from sockets.network import NetworkSocket, create_socket
 from sockets.secure import SecureSocket
@@ -35,6 +35,7 @@ def start_handling(host: str, port: int, handler: Callable[[socket.socket], None
     with create_socket() as server_socket:
         server_socket.bind((host, port))
         server_socket.listen()
+        print(f"server: socket {port} connected")
         while True:
             client_socket, address = server_socket.accept()
             threading.Thread(target=handler, args=[client_socket]).start()
@@ -44,10 +45,12 @@ def main(config: "Config"):
     ThreadPool(
         threads=[
             threading.Thread(
-                target=start_handling, args=[config.host, config.login_port, handle_login_request]
+                target=start_handling,
+                args=[config.host, config.login_port, handle_login_request],
             ),
             threading.Thread(
-                target=start_handling, args=[config.host, config.other_port, handle_other_request]
+                target=start_handling,
+                args=[config.host, config.other_port, handle_other_request],
             ),
         ]
     ).run()

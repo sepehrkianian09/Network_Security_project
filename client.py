@@ -39,9 +39,10 @@ def create_concrete_socket(socket: socket.socket) -> "Socket":
 def main(config: "Config"):
     login_socket = create_socket()
     login_socket.connect((config.host, config.login_port))
-    other_socket = create_socket()
-    other_socket.connect((config.host, config.other_port))
+    print("client: sockets connected")
     with login_socket:
+        other_socket = create_socket()
+        other_socket.connect((config.host, config.other_port))
         with other_socket:
             login_concrete_socket = create_concrete_socket(login_socket)
             other_concrete_socket = create_concrete_socket(other_socket)

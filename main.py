@@ -7,7 +7,7 @@ from config import main_config
 if __name__ == "__main__":
     ThreadPool(
         threads=[
-            threading.Thread(target=lambda: server_main(main_config)),
-            threading.Thread(target=lambda: client_main(main_config)),
+            threading.Thread(target=server_main, args=[main_config]),
+            threading.Thread(target=client_main, args=[main_config]),
         ]
     ).run()

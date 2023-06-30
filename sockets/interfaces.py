@@ -1,13 +1,11 @@
 from abc import ABC, abstractmethod, abstractproperty
 
 
-class Sender(ABC):
+class Socket(ABC):
     @abstractmethod
     def send(self, message):
         pass
 
-
-class Socket(Sender):
     @abstractmethod
     def receive(self, message_size: int) -> str:
         pass
