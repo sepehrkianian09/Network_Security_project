@@ -4,7 +4,7 @@ from sockets.interfaces import Socket
 
 
 def create_socket() -> socket.socket:
-    return socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    return socket.socket()
 
 
 class NetworkSocket(Socket):

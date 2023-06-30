@@ -8,6 +8,6 @@ class ThreadPool:
 
     def run(self):
         for thread in self.threads:
-            thread.run()
+            thread.start()
         for thread in self.threads:
             thread.join()

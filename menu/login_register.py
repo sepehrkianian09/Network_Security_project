@@ -13,6 +13,7 @@ class LoginRegisterMenu(Menu):
             MenuHandler(name="Login", handler=self.login),
         ]
 
+    @property
     def menu_items(self) -> List[MenuHandler]:
         return self.__menu_items
 

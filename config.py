@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import socket
 
 
 @dataclass
@@ -8,4 +9,4 @@ class Config:
     other_port: int
 
 
-main_config = Config(host="127.0.0.1", login_port=50100, other_port=65432)
+main_config = Config(host=socket.gethostname(), login_port=9000, other_port=9001)
