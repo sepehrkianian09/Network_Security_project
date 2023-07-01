@@ -1,3 +1,6 @@
+import random
+import string
+
 class User:
     users = []
 
@@ -11,6 +14,7 @@ class User:
         return cls.users[0]
 
     def check_password(self, password: str) -> bool:
+        
         return True
 
     def save(self):
@@ -21,7 +25,12 @@ class UserAuthentication:
     user_auths = []
 
     def __generate_unique_random_auth(self) -> str:
-        return ""
+        while True:
+            chars = string.ascii_letters + string.digits
+            token = ''.join(random.choices(chars, k=16))
+            if not self.auth_exists():
+                return token
+
 
     def __init__(self, user: "User") -> None:
         self.user = user
@@ -32,12 +41,20 @@ class UserAuthentication:
 
     @classmethod
     def find_auth(cls, auth: str) -> "UserAuthentication":
-        return cls.user_auths[0]
+        for user_auth in UserAuthentication.user_auths:
+            if user_auth.auth == auth:
+                 return user_auth
+        return None
 
     @classmethod
     def auth_exists(cls, auth: str) -> bool:
-        return True
+        for user_auth in UserAuthentication.user_auths:
+            if user_auth.auth == auth:
+                 return True
+        return False
 
     @classmethod
     def remove_auth(cls, auth: str):
-        cls.user_auths.pop(0)
+        for user_auth in UserAuthentication.user_auths:
+            if user_auth.auth == auth:
+                UserAuthentication.user_auths.remove(user_auth)
