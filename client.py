@@ -86,10 +86,10 @@ class SocketBalancer:
 class Client:
     def __init__(self, config: "Config") -> None:
         self.login_socket_balancer = SocketBalancer(
-            host=config.host, port=9099
+            host=config.host, port=config.login_port
         )
         self.other_socket_balancer = SocketBalancer(
-            host=config.host, port=9098
+            host=config.host, port=config.other_port
         )
         self.chat_listener = ChatListener(self)
         self.menu: "Menu" = LoginRegisterMenu(self)
