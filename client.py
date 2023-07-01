@@ -1,6 +1,8 @@
 import socket
 import threading
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Optional, Tuple
+from db_client.group_message import GroupMessage
+from db_client.private_message import PrivateMessage
 from handshaking.client import ClientHandShaker
 from key_holder import SecureKeyHolder
 from menu.login_register import LoginRegisterMenu
@@ -15,14 +17,53 @@ if TYPE_CHECKING:
     from menu.interfaces import Menu
 
 
+class ChatListener:
+    def __init__(self, client: "Client"):
+        self.client = client
+        # if __is_chat_listening__: "chat_thread is running" else: "chat_thread is None"
+        self.__is_chat_listening__ = False
+        self.__chat_thread: Optional[threading.Thread] = None
+
+    def toggle_chat_listening(self):
+        if self.__is_chat_listening__:
+            self.__end_chat_listening()
+        else:
+            self.__start_chat_listening()
+
+    def __start_chat_listening(self):
+        self.__is_chat_listening__ = True
+        self.__chat_thread = threading.Thread(target=self.__listen_to_chats)
+        self.__chat_thread.start()
+
+    def __end_chat_listening(self):
+        self.__is_chat_listening__ = False
+        self.__chat_thread.join()
+        self.__chat_thread = None
+
+    def __listen_to_chats(self):
+        while self.__is_chat_listening__:
+            # listen to client message, and save
+            pass
+
+
 class Client:
     def __init__(self, login_socket: "Socket", other_socket: "Socket") -> None:
         self.login_socket = login_socket
         self.other_socket = other_socket
+        self.chat_listener = ChatListener(self)
         self.menu: "Menu" = LoginRegisterMenu(self)
 
     def menu_transition(self, menu: "Menu"):
         self.menu = menu
+
+    def toggle_chat_listening(self):
+        self.chat_listener.toggle_chat_listening()
+
+    def save_private_message(self, private_message: PrivateMessage):
+        pass
+
+    def save_group_message(self, group_message: GroupMessage):
+        pass
 
     def run(self):
         while True:

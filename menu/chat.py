@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, List
 from menu.interfaces import Menu, MenuHandler
+from messaging import Request, RequestType, Response, ResponseType
 
 if TYPE_CHECKING:
     from client import Client
@@ -39,4 +40,13 @@ class ChatMenu(Menu):
         pass
 
     def logout(self):
-        pass
+        logout_request = Request(type=RequestType.logout)
+        logout_request.add_auth()
+        self.client.other_socket.send(logout_request.to_json())
+        response: "Response" = Response.schema().loads(
+            self.client.other_socket.receive(1024)
+        )
+        if response.type == ResponseType.success:
+            print("client: Logout Successful!")
+            Request.remove_auth()
+            self.client.toggle_chat_listening()

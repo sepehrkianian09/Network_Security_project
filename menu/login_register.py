@@ -15,24 +15,6 @@ class LoginRegisterMenu(Menu):
             MenuHandler(name="Login", handler=self.login),
         ]
 
-    def login(self):
-        self.client.login_socket.send(
-            Request(
-                type=RequestType.register,
-                data={
-                    "username": self.get_input("username"),
-                    "password": self.get_input("password"),
-                },
-            ).to_json()
-        )
-        response: "Response" = Response.schema().loads(
-            self.client.other_socket.receive(1024)
-        )
-        if response.type == ResponseType.success:
-            print("client: Register Successful!")
-            self.client.menu_transition(ChatMenu(self.client))
-
-
     def register(self):
         self.client.other_socket.send(
             Request(
@@ -48,3 +30,22 @@ class LoginRegisterMenu(Menu):
         )
         if response.type == ResponseType.success:
             print("client: Register Successful!")
+
+    def login(self):
+        self.client.login_socket.send(
+            Request(
+                type=RequestType.register,
+                data={
+                    "username": self.get_input("username"),
+                    "password": self.get_input("password"),
+                },
+            ).to_json()
+        )
+        response: "Response" = Response.schema().loads(
+            self.client.other_socket.receive(1024)
+        )
+        if response.type == ResponseType.success:
+            print("client: Login Successful!")
+            Request.set_auth(response.data["token"])
+            self.client.toggle_chat_listening()
+            self.client.menu_transition(ChatMenu(self.client))
