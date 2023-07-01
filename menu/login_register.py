@@ -86,8 +86,8 @@ class ChatMenu(Menu):
         request = Request(
             type=RequestType.send_private_message,
             data={
-                "receiver_name": private_message.content,
-                "content": private_message.receiver,
+                "receiver_name": private_message.receiver,
+                "content": private_message.content,
                 "time": private_message.time,
             },
         )
@@ -220,7 +220,7 @@ class GroupChatMenu(Menu):
             content=self.get_input("Content"),
         )
         request = Request(
-            type=RequestType.send_private_message,
+            type=RequestType.send_group_message,
             data={
                 "group_name": group_message.group,
                 "content": group_message.content,

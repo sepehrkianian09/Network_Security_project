@@ -92,7 +92,7 @@ class OtherHandler:
                 other_client_socket = ConnectionPool.instance().get_connection(
                     request.data["receiver_name"]
                 )
-                other_client_socket.send(other_client_request)
+                other_client_socket.send(other_client_request.to_json())
                 response: "Response" = Response.schema().loads(
                     other_client_socket.receive(1024)
                 )
@@ -116,7 +116,7 @@ class OtherHandler:
                         other_client_socket = ConnectionPool.instance().get_connection(
                             member.name
                         )
-                        other_client_socket.send(other_client_request)
+                        other_client_socket.send(other_client_request.to_json())
                         response: "Response" = Response.schema().loads(
                             other_client_socket.receive(1024)
                         )

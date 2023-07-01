@@ -8,9 +8,10 @@ class Message:
     ) -> None:
         self.time = time if time else datetime.datetime.now()
         self.content = content
+        self.sender = sender
 
     def __str__(self) -> str:
-        return f"{self.time} : {self.content}"
+        return f"{self.time} : {self.sender} : {self.content}"
 
 
 class PrivateMessage(Message):
