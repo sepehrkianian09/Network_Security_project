@@ -17,7 +17,7 @@ class RequestType(Enum):
     logout = "Logout"
     add_user = "Add User"
     show_members = "Show Members"
-    send_group_message = "Send Message"
+    send_group_message = "Send Group Message"
 
 
 auth: Optional[str] = None

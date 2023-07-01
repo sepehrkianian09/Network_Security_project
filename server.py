@@ -19,7 +19,13 @@ def handle_login_request(client_socket: socket.socket):
     networked_socket = NetworkSocket(client_socket)
     handshaker = ServerHandShaker(socket=networked_socket, key_holder=key_holder)
     handshaker.run_handshaking()
-    concrete_socket = SecureSocket(key_holder=key_holder, socket=networked_socket)
+    concrete_socket = SecureSocket(
+        key_holder=key_holder,
+        socket=networked_socket,
+        public_key=main_config.server_public,
+        private_key=main_config.server_private,
+        remote_pub_key=main_config.alice_public
+    )
     LoginHandler(concrete_socket).run()
 
 
@@ -28,7 +34,13 @@ def handle_other_request(client_socket: socket.socket):
         networked_socket = NetworkSocket(client_socket)
         handshaker = ServerHandShaker(socket=networked_socket, key_holder=key_holder)
         handshaker.run_handshaking()
-        concrete_socket = SecureSocket(key_holder=key_holder, socket=networked_socket)
+        concrete_socket = SecureSocket(
+            key_holder=key_holder,
+            socket=networked_socket,
+            public_key=main_config.server_public,
+            private_key=main_config.server_private,
+            remote_pub_key=main_config.alice_public
+        )
         # concrete_socket = MessageSocket(concrete_socket)
         OtherHandler(concrete_socket).run()
 
