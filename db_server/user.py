@@ -10,12 +10,14 @@ class User:
 
     @classmethod
     def get_user(cls, user_name: str) -> "User":
-        # TODO
-        return cls.users[0]
+        for user in cls.users:
+            if user.name == user_name:
+                  return user
+        return None
+    
 
     def check_password(self, password: str) -> bool:
-        
-        return True
+        return self.password == password
 
     def save(self):
         self.users.append(self)
@@ -28,7 +30,7 @@ class UserAuthentication:
         while True:
             chars = string.ascii_letters + string.digits
             token = ''.join(random.choices(chars, k=16))
-            if not self.auth_exists():
+            if not self.auth_exists(token):
                 return token
 
 
@@ -41,20 +43,20 @@ class UserAuthentication:
 
     @classmethod
     def find_auth(cls, auth: str) -> "UserAuthentication":
-        for user_auth in UserAuthentication.user_auths:
+        for user_auth in cls.user_auths:
             if user_auth.auth == auth:
                  return user_auth
         return None
 
     @classmethod
     def auth_exists(cls, auth: str) -> bool:
-        for user_auth in UserAuthentication.user_auths:
+        for user_auth in cls.user_auths:
             if user_auth.auth == auth:
                  return True
         return False
 
     @classmethod
     def remove_auth(cls, auth: str):
-        for user_auth in UserAuthentication.user_auths:
+        for user_auth in cls.user_auths:
             if user_auth.auth == auth:
-                UserAuthentication.user_auths.remove(user_auth)
+                cls.user_auths.remove(user_auth)
