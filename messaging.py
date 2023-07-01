@@ -20,12 +20,28 @@ class RequestType(Enum):
     send_group_message = "Send Group Message"
 
 
+auth: Optional[str] = None
+
+
 @dataclass_json
 @dataclass
 class Request:
     type: RequestType
-    data: Dict
-    header: Optional[Dict] = None
+    data: Optional[Dict] = None
+    auth_token: Optional[str] = None
+
+    def add_auth(self):
+        self.auth_token = auth
+
+    @classmethod
+    def remove_auth(cls):
+        global auth
+        auth = None
+
+    @classmethod
+    def set_auth(cls, new_auth: str):
+        global auth
+        auth = new_auth
 
 
 class ResponseType(Enum):
