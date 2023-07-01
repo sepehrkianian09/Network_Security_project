@@ -11,7 +11,7 @@ class User:
         self.password = password
 
     @classmethod
-    def get_user(cls, user_name: str) -> Optional["User"]:
+    def find_user_by_name(cls, user_name: str) -> Optional["User"]:
         for user in cls.users:
             if user.name == user_name:
                 return user

@@ -13,7 +13,7 @@ class LoginHandler:
         request: "Request" = Request.schema().loads(received_json)
         if request.type == RequestType.login:
             # check password and user existence
-            user = User.get_user(request.data["username"])
+            user = User.find_user_by_name(request.data["username"])
             if user.check_password(request.data["password"]):
                 login_token = UserAuthentication(user=user)
                 login_token.save()

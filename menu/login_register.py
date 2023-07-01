@@ -111,7 +111,23 @@ class ChatMenu(Menu):
         self.client.other_socket.__exit__()
 
     def enter_group(self):
-        pass
+        group_name = self.get_input("Group Name")
+        request = Request(
+            type=RequestType.enter_group,
+            data={"group_name": group_name},
+        )
+        request.add_auth()
+        self.client.other_socket.send(request.to_json())
+        response: "Response" = Response.schema().loads(
+            self.client.other_socket.receive(1024)
+        )
+        if response.type == ResponseType.success:
+            print(f"Entered Group {group_name}")
+            is_admin = response.data["is_admin"]
+            self.client.menu_transition(
+                GroupChatMenu(self.client, group_name=group_name, is_admin=is_admin)
+            )
+        self.client.other_socket.__exit__()
 
     def logout(self):
         logout_request = Request(type=RequestType.logout)
@@ -130,15 +146,19 @@ class ChatMenu(Menu):
 
 
 class GroupChatMenu(Menu):
-    def __init__(self, client: "Client") -> None:
+    def __init__(self, client: "Client", group_name: str, is_admin: bool) -> None:
         super().__init__(client=client)
+        self.group_name = group_name
         self.menu_items = [
-            # This should be shown if user is the Admin
-            # MenuHandler(name="Add Users", handler=self.add_users),
             MenuHandler(name="Show Chats", handler=self.show_chats),
             MenuHandler(name="Send Message", handler=self.send_message),
             MenuHandler(name="Back", handler=self.back),
         ]
+        # This should be shown if user is the Admin
+        if is_admin:
+            self.menu_items.insert(
+                0, MenuHandler(name="Add Users", handler=self.add_users)
+            )
 
     def add_users(self):
         pass
@@ -150,4 +170,4 @@ class GroupChatMenu(Menu):
         pass
 
     def back(self):
-        pass
+        self.client.menu_transition(ChatMenu(self.client))
