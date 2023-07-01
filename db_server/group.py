@@ -15,3 +15,7 @@ class Group:
 
     def save(self):
         self.groups.append(self)
+
+    @classmethod
+    def find_groups_by_user(cls, user: "User") -> List["Group"]:
+        return []
