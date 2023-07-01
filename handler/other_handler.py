@@ -19,24 +19,24 @@ class OtherHandler:
                 f"server: registered {request.data['username']} with password {request.data['password']}."
             )
             self.socket.send(Response().to_json())
-        if request.type == RequestType.logout:
+        elif request.type == RequestType.logout:
             if UserAuthentication.auth_exists(request.auth_token):
                 user = UserAuthentication.find_auth(request.auth_token).user
                 UserAuthentication.remove_auth(request.auth_token)
-                ConnectionPool.instance.remove_connection(user.user_name)
+                ConnectionPool.instance().remove_connection(user.user_name)
                 self.socket.send(Response().to_json())
                 print(f"server: logout successful")
-        if request.type == RequestType.show_online_users:
+        elif request.type == RequestType.show_online_users:
             pass
-        if request.type == RequestType.show_groups:
+        elif request.type == RequestType.show_groups:
             pass
-        if request.type == RequestType.show_chats:
+        elif request.type == RequestType.show_chats:
             pass
-        if request.type == RequestType.send_private_message:
+        elif request.type == RequestType.send_private_message:
             pass
-        if request.type == RequestType.send_group_message:
+        elif request.type == RequestType.send_group_message:
             pass
-        if request.type == RequestType.enter_group:
+        elif request.type == RequestType.enter_group:
             pass
-        if request.type == RequestType.create_group:
+        elif request.type == RequestType.create_group:
             pass

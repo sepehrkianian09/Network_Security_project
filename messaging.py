@@ -27,7 +27,7 @@ auth: Optional[str] = None
 @dataclass
 class Request:
     type: RequestType
-    data: Dict = {}
+    data: Optional[Dict] = None
     auth_token: Optional[str] = None
 
     def add_auth(self):

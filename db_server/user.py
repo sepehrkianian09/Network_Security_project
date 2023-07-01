@@ -11,7 +11,7 @@ class User:
         return cls.users[0]
 
     def check_password(self, password: str) -> bool:
-        return False
+        return True
 
     def save(self):
         self.users.append(self)
@@ -28,11 +28,15 @@ class UserAuthentication:
         self.auth = self.__generate_unique_random_auth()
 
     def save(self):
-        self.user_auths.append(self)
+        self.__save(self)
+
+    @classmethod
+    def __save(cls, self: "UserAuthentication"):
+        cls.user_auths.append(self)
 
     @classmethod
     def find_auth(cls, auth: str) -> "UserAuthentication":
-        pass
+        return cls.user_auths[0]
 
     @classmethod
     def auth_exists(cls, auth: str) -> bool:
@@ -40,4 +44,4 @@ class UserAuthentication:
 
     @classmethod
     def remove_auth(cls, auth: str):
-        pass
+        cls.user_auths.pop(0)

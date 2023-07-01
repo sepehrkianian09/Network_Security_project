@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 from sockets.interfaces import Socket
 
 
@@ -6,15 +6,13 @@ ID_TYPE = str
 
 
 class ConnectionPool:
-    __instance__: "ConnectionPool"
+    __instance__: Optional["ConnectionPool"] = None
 
-    @property
     @classmethod
     def instance(cls) -> "ConnectionPool":
-        if cls.__instance__:
-            return cls.__instance__
-        else:
-            return cls()
+        if not cls.__instance__:
+            cls.__instance__ = cls()
+        return cls.__instance__
 
     def __init__(self) -> None:
         self.pool_map: Dict[ID_TYPE, "Socket"] = {}

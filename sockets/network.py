@@ -16,6 +16,7 @@ class NetworkSocket(Socket):
             self.__socket = __socket
         else:
             self.__socket = create_socket()
+        self.__socket_closed__ = False
 
     def send(self, message: str):
         self.__socket.sendall(message.encode(self.encode_format))
@@ -26,5 +27,10 @@ class NetworkSocket(Socket):
         except:
             return ""
 
+    @property
+    def socket_closed(self):
+        return self.__socket_closed__
+
     def __exit__(self):
+        self.__socket_closed__ = True
         return self.__socket.__exit__()

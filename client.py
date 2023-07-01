@@ -46,15 +46,59 @@ class ChatListener:
             pass
 
 
+class SocketBalancer:
+    def __init__(self, host: str, port: int):
+        self.host = host
+        self.port = port
+        self.__network_socket: Optional[NetworkSocket] = None
+        self.__concrete_socket: Optional["Socket"] = None
+
+    def is_socket_closed(self) -> bool:
+        return self.__network_socket is None or self.__network_socket.socket_closed
+
+    def __create_socket(self) -> socket.socket:
+        s = create_socket()
+        s.connect((self.host, self.port))
+        return s
+
+    def __create_concrete_socket(self, socket: "Socket") -> "Socket":
+        handshaker = ClientHandShaker(key_holder=key_holder, socket=socket)
+        handshaker.run_handshaking()
+        concrete_socket = SecureSocket(key_holder=key_holder, socket=socket)
+        # concrete_socket = MessageSocket(concrete_socket)
+        return concrete_socket
+
+    @property
+    def concrete_socket(self) -> "Socket":
+        if self.is_socket_closed():
+            self.__network_socket = NetworkSocket(self.__create_socket())
+            self.__concrete_socket = self.__create_concrete_socket(
+                self.__network_socket
+            )
+        return self.__concrete_socket
+
+
 class Client:
-    def __init__(self, login_socket: "Socket", other_socket: "Socket") -> None:
-        self.login_socket = login_socket
-        self.other_socket = other_socket
+    def __init__(self, config: "Config") -> None:
+        self.login_socket_balancer = SocketBalancer(
+            host=config.host, port=config.login_port
+        )
+        self.other_socket_balancer = SocketBalancer(
+            host=config.host, port=config.other_port
+        )
         self.chat_listener = ChatListener(self)
         self.menu: "Menu" = LoginRegisterMenu(self)
 
     def menu_transition(self, menu: "Menu"):
         self.menu = menu
+
+    @property
+    def login_socket(self) -> "Socket":
+        return self.login_socket_balancer.concrete_socket
+
+    @property
+    def other_socket(self) -> "Socket":
+        return self.other_socket_balancer.concrete_socket
 
     def toggle_chat_listening(self):
         self.chat_listener.toggle_chat_listening()
@@ -73,28 +117,9 @@ class Client:
 key_holder = SecureKeyHolder()
 
 
-def create_concrete_socket(socket: socket.socket) -> "Socket":
-    networked_socket = NetworkSocket(socket)
-    handshaker = ClientHandShaker(key_holder=key_holder, socket=networked_socket)
-    handshaker.run_handshaking()
-    concrete_socket = SecureSocket(key_holder=key_holder, socket=networked_socket)
-    # concrete_socket = MessageSocket(concrete_socket)
-    return concrete_socket
-
-
 def main(config: "Config"):
-    login_socket = create_socket()
-    login_socket.connect((config.host, config.login_port))
     print("client: sockets connected")
-    with login_socket:
-        other_socket = create_socket()
-        other_socket.connect((config.host, config.other_port))
-        with other_socket:
-            login_concrete_socket = create_concrete_socket(login_socket)
-            other_concrete_socket = create_concrete_socket(other_socket)
-            Client(
-                login_socket=login_concrete_socket, other_socket=other_concrete_socket
-            ).run()
+    Client(config=config).run()
 
 
 if __name__ == "__main__":
