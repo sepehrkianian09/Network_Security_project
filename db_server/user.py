@@ -1,20 +1,21 @@
 import random
 import string
+from typing import List, Optional
+
 
 class User:
-    users = []
+    users: List["User"] = []
 
-    def __init__(self, user_name: str, password: str):
-        self.user_name = user_name
+    def __init__(self, name: str, password: str):
+        self.name = name
         self.password = password
 
     @classmethod
-    def get_user(cls, user_name: str) -> "User":
+    def find_user_by_name(cls, user_name: str) -> Optional["User"]:
         for user in cls.users:
             if user.name == user_name:
-                  return user
+                return user
         return None
-    
 
     def check_password(self, password: str) -> bool:
         return self.password == password
@@ -24,15 +25,14 @@ class User:
 
 
 class UserAuthentication:
-    user_auths = []
+    user_auths: List["UserAuthentication"] = []
 
     def __generate_unique_random_auth(self) -> str:
         while True:
             chars = string.ascii_letters + string.digits
-            token = ''.join(random.choices(chars, k=16))
+            token = "".join(random.choices(chars, k=16))
             if not self.auth_exists(token):
                 return token
-
 
     def __init__(self, user: "User") -> None:
         self.user = user
@@ -42,17 +42,17 @@ class UserAuthentication:
         self.user_auths.append(self)
 
     @classmethod
-    def find_auth(cls, auth: str) -> "UserAuthentication":
+    def find_auth(cls, auth: str) -> Optional["UserAuthentication"]:
         for user_auth in cls.user_auths:
             if user_auth.auth == auth:
-                 return user_auth
+                return user_auth
         return None
 
     @classmethod
     def auth_exists(cls, auth: str) -> bool:
         for user_auth in cls.user_auths:
             if user_auth.auth == auth:
-                 return True
+                return True
         return False
 
     @classmethod

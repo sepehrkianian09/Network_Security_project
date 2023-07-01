@@ -24,10 +24,13 @@ class Menu(ABC):
 
         try:
             selected_menu = int(input())
-            if 0 <= selected_menu < len(self.menu_items):
-                self.menu_items[selected_menu].handler()
+            if not (0 <= selected_menu < len(self.menu_items)):
+                raise Exception()
         except:
             print("Invalid Input")
+            return
+
+        self.menu_items[selected_menu].handler()
 
     def get_input(self, input_name: str) -> str:
         print(f"please enter {input_name}: ")
