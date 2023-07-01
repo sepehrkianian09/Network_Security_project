@@ -1,9 +1,9 @@
 import logging
 
 from .ecc.curve import Curve
-from .ratchet.aliceaxolotlparameters import AliceAxolotlParameters
-from .ratchet.bobaxolotlparamaters import BobAxolotlParameters
-from .ratchet.symmetricaxolotlparameters import SymmetricAxolotlParameters
+from .ratchet.alice_protocol_parameters import AliceProtocolParameters
+from .ratchet.bob_protocol_parameters import BobProtocolParameters
+from .ratchet.symmetric_protocol_parameters import SymmetricProtocolParameters
 from .ratchet.ratchetingsession import RatchetingSession
 from security.exceptions.invalidkeyexception import InvalidKeyException
 from security.exceptions.untrustedidentityexception import UntrustedIdentityException
@@ -45,7 +45,7 @@ class SessionBuilder:
             return None
 
         ourSignedPreKey = self.signedPreKeyStore.loadSignedPreKey(message.getSignedPreKeyId()).getKeyPair()
-        parameters = BobAxolotlParameters.newBuilder()
+        parameters = BobProtocolParameters.newBuilder()
         parameters.setTheirBaseKey(message.getBaseKey())\
             .setTheirIdentityKey(message.getIdentityKey())\
             .setOurIdentityKey(self.identityKeyStore.getIdentityKeyPair())\
@@ -89,7 +89,7 @@ class SessionBuilder:
         theirOneTimePreKey = preKey.getPreKey()
         theirOneTimePreKeyId = preKey.getPreKeyId() if theirOneTimePreKey is not None else None
 
-        parameters = AliceAxolotlParameters.newBuilder()
+        parameters = AliceProtocolParameters.newBuilder()
 
         parameters.setOurBaseKey(ourBaseKey)\
             .setOurIdentityKey(self.identityKeyStore.getIdentityKeyPair())\
@@ -136,7 +136,7 @@ class SessionBuilder:
                 keyExchangeMessage.getBaseKeySignature()):
             raise InvalidKeyException("Bad signature!")
 
-        builder = SymmetricAxolotlParameters.newBuilder()
+        builder = SymmetricProtocolParameters.newBuilder()
         if not sessionRecord.getSessionState().hasPendingKeyExchange():
             builder.setOurIdentityKey(self.identityKeyStore.getIdentityKeyPair())\
                 .setOurBaseKey(Curve.generateKeyPair())\
@@ -185,7 +185,7 @@ class SessionBuilder:
             else:
                 return
 
-        parameters = SymmetricAxolotlParameters.newBuilder()
+        parameters = SymmetricProtocolParameters.newBuilder()
 
         parameters.setOurBaseKey(sessionRecord.getSessionState().getPendingKeyExchangeBaseKey())\
             .setOurRatchetKey(sessionRecord.getSessionState().getPendingKeyExchangeRatchetKey())\

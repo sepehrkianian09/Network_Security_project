@@ -1,7 +1,7 @@
 class SenderKeyName:
-    def __init__(self, groupId, senderAxolotlAddress):
+    def __init__(self, groupId, senderProtocolAddress):
         self.groupId = groupId
-        self.sender = senderAxolotlAddress
+        self.sender = senderProtocolAddress
 
     def getGroupId(self):
         return self.groupId

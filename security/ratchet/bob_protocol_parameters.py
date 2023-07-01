@@ -1,25 +1,26 @@
-class SymmetricAxolotlParameters:
-    def __init__(self, ourBaseKey, ourRatchetKey, ourIdentityKey, theirBaseKey,
-                 theirRatchetKey, theirIdentityKey):
-        self.ourBaseKey = ourBaseKey
+class BobProtocolParameters:
+    def __init__(self, ourIdentityKey, ourSignedPreKey, ourRatchetKey, ourOneTimePreKey,
+                 theirIdentityKey, theirBaseKey):
+
         self.ourIdentityKey = ourIdentityKey
+        self.ourSignedPreKey = ourSignedPreKey
         self.ourRatchetKey = ourRatchetKey
-        self.theirRatchetKey = theirRatchetKey
+        self.ourOneTimePreKey = ourOneTimePreKey
         self.theirIdentityKey = theirIdentityKey
         self.theirBaseKey = theirBaseKey
 
-        if ourBaseKey is None or ourIdentityKey is None or ourRatchetKey is None \
-                or theirRatchetKey is None or theirIdentityKey is None or theirBaseKey is None:
+        if ourIdentityKey is None or ourSignedPreKey is None or ourRatchetKey is None \
+                or theirIdentityKey is None or theirBaseKey is None:
             raise ValueError("Null value!")
-
-    def getOurBaseKey(self):
-        return self.ourBaseKey
 
     def getOurIdentityKey(self):
         return self.ourIdentityKey
 
-    def getTheirRatchetKey(self):
-        return self.theirRatchetKey
+    def getOurSignedPreKey(self):
+        return self.ourSignedPreKey
+
+    def getOurOneTimePreKey(self):
+        return self.ourOneTimePreKey
 
     def getTheirIdentityKey(self):
         return self.theirIdentityKey
@@ -32,14 +33,14 @@ class SymmetricAxolotlParameters:
 
     @staticmethod
     def newBuilder():
-        return SymmetricAxolotlParameters.Builder()
+        return BobProtocolParameters.Builder()
 
     class Builder:
         def __init__(self):
             self.ourIdentityKey = None
-            self.ourBaseKey = None
+            self.ourSignedPreKey = None
+            self.ourOneTimePreKey = None
             self.ourRatchetKey = None
-            self.theirRatchetKey = None
             self.theirIdentityKey = None
             self.theirBaseKey = None
 
@@ -47,16 +48,16 @@ class SymmetricAxolotlParameters:
             self.ourIdentityKey = ourIdentityKey
             return self
 
-        def setOurBaseKey(self, ourBaseKey):
-            self.ourBaseKey = ourBaseKey
+        def setOurSignedPreKey(self, ourSignedPreKey):
+            self.ourSignedPreKey = ourSignedPreKey
+            return self
+
+        def setOurOneTimePreKey(self, ourOneTimePreKey):
+            self.ourOneTimePreKey = ourOneTimePreKey
             return self
 
         def setOurRatchetKey(self, ourRatchetKey):
             self.ourRatchetKey = ourRatchetKey
-            return self
-
-        def setTheirRatchetKey(self, theirRatchetKey):
-            self.theirRatchetKey = theirRatchetKey
             return self
 
         def setTheirIdentityKey(self, theirIdentityKey):
@@ -68,5 +69,5 @@ class SymmetricAxolotlParameters:
             return self
 
         def create(self):
-            return SymmetricAxolotlParameters(self.ourBaseKey, self.ourRatchetKey, self.ourIdentityKey,
-                                              self.theirBaseKey, self.theirRatchetKey, self.theirIdentityKey)
+            return BobProtocolParameters(self.ourIdentityKey, self.ourSignedPreKey, self.ourRatchetKey,
+                                         self.ourOneTimePreKey, self.theirIdentityKey, self.theirBaseKey)

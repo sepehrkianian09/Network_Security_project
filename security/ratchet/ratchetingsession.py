@@ -1,6 +1,6 @@
 from ..ecc.curve import Curve
-from .bobaxolotlparamaters import BobAxolotlParameters
-from .aliceaxolotlparameters import AliceAxolotlParameters
+from .bob_protocol_parameters import BobProtocolParameters
+from .alice_protocol_parameters import AliceProtocolParameters
 from ..kdf.hkdfv3 import HKDFv3
 from ..util.byteutil import ByteUtil
 from .rootkey import RootKey
@@ -12,7 +12,7 @@ class RatchetingSession:
     @staticmethod
     def initializeSession(sessionState, parameters):
         if RatchetingSession.isAlice(parameters.getOurBaseKey().getPublicKey(), parameters.getTheirBaseKey()):
-            aliceParameters = AliceAxolotlParameters.newBuilder()
+            aliceParameters = AliceProtocolParameters.newBuilder()
             aliceParameters.setOurBaseKey(parameters.getOurBaseKey()) \
                 .setOurIdentityKey(parameters.getOurIdentityKey()) \
                 .setTheirRatchetKey(parameters.getTheirRatchetKey()) \
@@ -21,7 +21,7 @@ class RatchetingSession:
                 .setTheirOneTimePreKey(None)
             RatchetingSession.initializeSessionAsAlice(sessionState, aliceParameters.create())
         else:
-            bobParameters = BobAxolotlParameters.newBuilder()
+            bobParameters = BobProtocolParameters.newBuilder()
             bobParameters.setOurIdentityKey(parameters.getOurIdentityKey()) \
                 .setOurRatchetKey(parameters.getOurRatchetKey()) \
                 .setOurSignedPreKey(parameters.getOurBaseKey()) \

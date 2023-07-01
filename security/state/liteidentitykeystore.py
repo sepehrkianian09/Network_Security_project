@@ -1,8 +1,8 @@
-from axolotl.state.identitykeystore import IdentityKeyStore
-from axolotl.identitykey import IdentityKey
-from axolotl.identitykeypair import IdentityKeyPair
-from axolotl.util.keyhelper import KeyHelper
-from axolotl.ecc.djbec import *
+from security.state.identitykeystore import IdentityKeyStore
+from security.identitykey import IdentityKey
+from security.identitykeypair import IdentityKeyPair
+from security.util.keyhelper import KeyHelper
+from security.ecc.djbec import *
 import sys
 
 

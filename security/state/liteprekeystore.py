@@ -1,5 +1,5 @@
-from axolotl.state.prekeystore import PreKeyStore
-from axolotl.state.prekeyrecord import PreKeyRecord
+from security.state.prekeystore import PreKeyStore
+from security.state.prekeyrecord import PreKeyRecord
 import sys
 
 

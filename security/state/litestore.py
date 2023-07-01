@@ -1,4 +1,4 @@
-from axolotl.state.axolotlstore import AxolotlStore
+from security.state.main_store import MainStore
 from .liteidentitykeystore import LiteIdentityKeyStore
 from .liteprekeystore import LitePreKeyStore
 from .litesessionstore import LiteSessionStore
@@ -7,7 +7,7 @@ from .litesenderkeystore import LiteSenderKeyStore
 import sqlite3
 
 
-class LiteStore(AxolotlStore):
+class LiteStore(MainStore):
     def __init__(self, db):
         conn = sqlite3.connect(db, check_same_thread=False)
         conn.text_factory = bytes

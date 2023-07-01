@@ -1,4 +1,4 @@
-class AliceAxolotlParameters:
+class AliceProtocolParameters:
     def __init__(self, ourIdentityKey, ourBaseKey, theirIdentityKey, theirSignedPreKey,
                  theirRatchetKey, theirOneTimePreKey):
         self.ourBaseKey = ourBaseKey
@@ -32,7 +32,7 @@ class AliceAxolotlParameters:
 
     @staticmethod
     def newBuilder():
-        return AliceAxolotlParameters.Builder()
+        return AliceProtocolParameters.Builder()
 
     class Builder:
         def __init__(self):
@@ -68,5 +68,5 @@ class AliceAxolotlParameters:
             return self
 
         def create(self):
-            return AliceAxolotlParameters(self.ourIdentityKey, self.ourBaseKey, self.theirIdentityKey,
-                                          self.theirSignedPreKey, self.theirRatchetKey, self.theirOneTimePreKey)
+            return AliceProtocolParameters(self.ourIdentityKey, self.ourBaseKey, self.theirIdentityKey,
+                                           self.theirSignedPreKey, self.theirRatchetKey, self.theirOneTimePreKey)

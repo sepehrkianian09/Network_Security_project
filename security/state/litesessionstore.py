@@ -1,5 +1,5 @@
-from axolotl.state.sessionstore import SessionStore
-from axolotl.state.sessionrecord import SessionRecord
+from security.state.sessionstore import SessionStore
+from security.state.sessionrecord import SessionRecord
 import sys
 
 

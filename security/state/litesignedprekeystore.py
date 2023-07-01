@@ -1,6 +1,6 @@
-from axolotl.state.signedprekeystore import SignedPreKeyStore
-from axolotl.state.signedprekeyrecord import SignedPreKeyRecord
-from axolotl.invalidkeyidexception import InvalidKeyIdException
+from security.state.signedprekeystore import SignedPreKeyStore
+from security.state.signedprekeyrecord import SignedPreKeyRecord
+from security.exceptions.invalidkeyidexception import InvalidKeyIdException
 import sys
 
 
