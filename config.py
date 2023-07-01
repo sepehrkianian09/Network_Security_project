@@ -16,8 +16,8 @@ class Config:
     alice_private: "PrivateKey"
 
 
-server_public, server_private = rsa.newkeys(512)
-alice_public, alice_private = rsa.newkeys(512)
+server_public, server_private = rsa.newkeys(1024)
+alice_public, alice_private = rsa.newkeys(1024)
 main_config = Config(
     host=socket.gethostname(),
     login_port=9000,
