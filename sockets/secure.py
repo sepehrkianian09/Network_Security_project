@@ -4,7 +4,6 @@ import os
 
 import rsa
 
-from config import main_config
 from key_holder import KeyHolder
 from sockets.interfaces import DecoratorSocket, Socket
 
