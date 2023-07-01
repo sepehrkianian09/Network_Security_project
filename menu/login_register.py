@@ -100,7 +100,15 @@ class ChatMenu(Menu):
         self.client.other_socket.__exit__()
 
     def show_groups(self):
-        pass
+        request = Request(type=RequestType.show_groups)
+        request.add_auth()
+        self.client.other_socket.send(request.to_json())
+        response: "Response" = Response.schema().loads(
+            self.client.other_socket.receive(1024)
+        )
+        if response.type == ResponseType.success:
+            print(f"Groups: {response.data['groups']}")
+        self.client.other_socket.__exit__()
 
     def enter_group(self):
         pass
