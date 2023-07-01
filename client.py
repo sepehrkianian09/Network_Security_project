@@ -1,17 +1,16 @@
 import socket
 import threading
-from typing import TYPE_CHECKING, Optional, Tuple
+from typing import TYPE_CHECKING, Optional
+
+from config import Config, main_config
 from db_client.group_message import GroupMessage
 from db_client.private_message import PrivateMessage
 from handshaking.client import ClientHandShaker
 from key_holder import SecureKeyHolder
 from menu.login_register import LoginRegisterMenu
 from sockets.interfaces import Socket
-from sockets.message import MessageSocket
 from sockets.network import NetworkSocket, create_socket
 from sockets.secure import SecureSocket
-from thread_pool import ThreadPool
-from config import Config, main_config
 
 if TYPE_CHECKING:
     from menu.interfaces import Menu
@@ -64,7 +63,13 @@ class SocketBalancer:
     def __create_concrete_socket(self, socket: "Socket") -> "Socket":
         handshaker = ClientHandShaker(key_holder=key_holder, socket=socket)
         handshaker.run_handshaking()
-        concrete_socket = SecureSocket(key_holder=key_holder, socket=socket)
+        concrete_socket = SecureSocket(
+        key_holder=key_holder,
+        socket=socket,
+        public_key=main_config.alice_public,
+        private_key=main_config.alice_private,
+        remote_pub_key=main_config.server_public
+    )
         # concrete_socket = MessageSocket(concrete_socket)
         return concrete_socket
 
@@ -81,10 +86,10 @@ class SocketBalancer:
 class Client:
     def __init__(self, config: "Config") -> None:
         self.login_socket_balancer = SocketBalancer(
-            host=config.host, port=config.login_port
+            host=config.host, port=9099
         )
         self.other_socket_balancer = SocketBalancer(
-            host=config.host, port=config.other_port
+            host=config.host, port=9098
         )
         self.chat_listener = ChatListener(self)
         self.menu: "Menu" = LoginRegisterMenu(self)
