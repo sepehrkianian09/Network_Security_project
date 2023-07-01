@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 from menu.interfaces import Menu, MenuHandler
 from messaging import Request, RequestType, Response, ResponseType
 
@@ -50,6 +50,7 @@ class LoginRegisterMenu(Menu):
             self.client.toggle_chat_listening()
             self.client.menu_transition(ChatMenu(self.client))
 
+
 class ChatMenu(Menu):
     def __init__(self, client: "Client") -> None:
         super().__init__(client=client)
@@ -66,7 +67,15 @@ class ChatMenu(Menu):
         ]
 
     def show_online_users(self):
-        pass
+        request = Request(type=RequestType.show_online_users)
+        request.add_auth()
+        self.client.other_socket.send(request.to_json())
+        response: "Response" = Response.schema().loads(
+            self.client.other_socket.receive(1024)
+        )
+        if response.type == ResponseType.success:
+            print(f"Online Users: {response.data['online_users']}")
+        self.client.other_socket.__exit__()
 
     def send_message(self):
         pass
@@ -75,7 +84,20 @@ class ChatMenu(Menu):
         pass
 
     def create_group(self):
-        pass
+        request = Request(
+            type=RequestType.create_group,
+            data={
+                "group_name": self.get_input("Group Name"),
+            },
+        )
+        request.add_auth()
+        self.client.other_socket.send(request.to_json())
+        response: "Response" = Response.schema().loads(
+            self.client.other_socket.receive(1024)
+        )
+        if response.type == ResponseType.success:
+            print("Create Group Successful!")
+        self.client.other_socket.__exit__()
 
     def show_groups(self):
         pass
@@ -95,5 +117,29 @@ class ChatMenu(Menu):
             Request.remove_auth()
             self.client.toggle_chat_listening()
             self.client.login_socket.__exit__()
-            self.client.other_socket.__exit__()
             self.client.menu_transition(LoginRegisterMenu(self.client))
+        self.client.other_socket.__exit__()
+
+
+class GroupChatMenu(Menu):
+    def __init__(self, client: "Client") -> None:
+        super().__init__(client=client)
+        self.menu_items = [
+            # This should be shown if user is the Admin
+            # MenuHandler(name="Add Users", handler=self.add_users),
+            MenuHandler(name="Show Chats", handler=self.show_chats),
+            MenuHandler(name="Send Message", handler=self.send_message),
+            MenuHandler(name="Back", handler=self.back),
+        ]
+
+    def add_users(self):
+        pass
+
+    def show_chats(self):
+        pass
+
+    def send_message(self):
+        pass
+
+    def back(self):
+        pass

@@ -27,7 +27,11 @@ class OtherHandler:
                 self.socket.send(Response().to_json())
                 print(f"server: logout successful")
         elif request.type == RequestType.show_online_users:
-            pass
+            if UserAuthentication.auth_exists(request.auth_token):
+                response = Response(
+                    data={"online_users": ConnectionPool.instance().get_connected_ids()}
+                )
+                self.socket.send(response.to_json())
         elif request.type == RequestType.show_groups:
             pass
         elif request.type == RequestType.show_chats:

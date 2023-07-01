@@ -1,11 +1,17 @@
+from typing import TYPE_CHECKING, List
+
+
+if TYPE_CHECKING:
+    from db_server.user import User
+
+
 class Group:
-    def __init__(self, name, owner, members):
+    groups = []
+
+    def __init__(self, name: str, owner: "User", members: List["User"] = []):
         self.name = name
         self.owner = owner
         self.members = members
-        self.ID = self.token_gen()
 
-
-
-    def token_gen(self):
-        return "pass"
+    def save(self):
+        self.groups.append(self)

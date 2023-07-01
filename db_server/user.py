@@ -28,11 +28,7 @@ class UserAuthentication:
         self.auth = self.__generate_unique_random_auth()
 
     def save(self):
-        self.__save(self)
-
-    @classmethod
-    def __save(cls, self: "UserAuthentication"):
-        cls.user_auths.append(self)
+        self.user_auths.append(self)
 
     @classmethod
     def find_auth(cls, auth: str) -> "UserAuthentication":

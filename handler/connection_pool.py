@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 from sockets.interfaces import Socket
 
 
@@ -35,3 +35,6 @@ class ConnectionPool:
 
     def contains_connection(self, id: ID_TYPE) -> bool:
         return id in self.pool_map
+
+    def get_connected_ids(self) -> List[ID_TYPE]:
+        return list(self.pool_map.keys())
