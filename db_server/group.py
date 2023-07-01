@@ -18,4 +18,10 @@ class Group:
 
     @classmethod
     def find_groups_by_user(cls, user: "User") -> List["Group"]:
-        return []
+        groups_by_user = []
+        for group in Group.groups:
+            #Owner is in members.
+            for user_iterate in group.members:
+                if user.name == user_iterate.name:
+                    groups_by_user.append(group)
+        return groups_by_user
