@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING
+from db_client.message import GroupMessage, PrivateMessage
 from menu.interfaces import Menu, MenuHandler
 from messaging import Request, RequestType, Response, ResponseType
 
@@ -78,10 +79,28 @@ class ChatMenu(Menu):
         self.client.other_socket.__exit__()
 
     def send_message(self):
-        pass
+        private_message = PrivateMessage(
+            receiver_name=self.get_input("Receiver Name"),
+            content=self.get_input("Content"),
+        )
+        request = Request(
+            type=RequestType.send_private_message,
+            data={
+                "receiver_name": private_message.content,
+                "content": private_message.receiver,
+                "time": private_message.time,
+            },
+        )
+        request.add_auth()
+        self.client.other_socket.send(request.to_json())
+        response: "Response" = Response.schema().loads(
+            self.client.other_socket.receive(1024)
+        )
+        if response.type == ResponseType.success:
+            self.client.save_private_message(private_message=private_message)
 
     def show_received_messages(self):
-        pass
+        self.client.show_private_messages()
 
     def create_group(self):
         request = Request(
@@ -164,7 +183,10 @@ class GroupChatMenu(Menu):
     def add_user(self):
         request = Request(
             type=RequestType.add_user,
-            data={"group_name": self.group_name, "user_name": self.get_input("User Name")},
+            data={
+                "group_name": self.group_name,
+                "user_name": self.get_input("User Name"),
+            },
         )
         request.add_auth()
         self.client.other_socket.send(request.to_json())
@@ -190,10 +212,28 @@ class GroupChatMenu(Menu):
         self.client.other_socket.__exit__()
 
     def show_chats(self):
-        pass
+        self.client.show_group_messages(self.group_name)
 
     def send_message(self):
-        pass
+        group_message = GroupMessage(
+            group_name=self.group_name,
+            content=self.get_input("Content"),
+        )
+        request = Request(
+            type=RequestType.send_private_message,
+            data={
+                "group_name": group_message.group,
+                "content": group_message.content,
+                "time": group_message.time,
+            },
+        )
+        request.add_auth()
+        self.client.other_socket.send(request.to_json())
+        response: "Response" = Response.schema().loads(
+            self.client.other_socket.receive(1024)
+        )
+        if response.type == ResponseType.success:
+            self.client.save_group_message(group_message=group_message)
 
     def back(self):
         self.client.menu_transition(ChatMenu(self.client))

@@ -1,11 +1,11 @@
 import socket
 import threading
 from typing import TYPE_CHECKING, Optional, Tuple
-from db_client.group_message import GroupMessage
-from db_client.private_message import PrivateMessage
+from db_client.message import PrivateMessage, GroupMessage
 from handshaking.client import ClientHandShaker
 from key_holder import SecureKeyHolder
 from menu.login_register import LoginRegisterMenu
+from messaging import Request, RequestType, Response
 from sockets.interfaces import Socket
 from sockets.message import MessageSocket
 from sockets.network import NetworkSocket, create_socket
@@ -43,7 +43,28 @@ class ChatListener:
     def __listen_to_chats(self):
         while self.__is_chat_listening__:
             # listen to client message, and save
-            pass
+            request: "Request" = Request.schema().loads(
+                self.client.login_socket.receive(1024)
+            )
+            if request.type == RequestType.send_private_message:
+                self.client.save_private_message(
+                    PrivateMessage(
+                        content=request.data["content"],
+                        sender=request.data["sender"],
+                        time=request.data["time"],
+                    )
+                )
+                self.client.login_socket.send(Response().to_json())
+            elif request.type == RequestType.send_group_message:
+                self.client.save_group_message(
+                    GroupMessage(
+                        content=request.data["content"],
+                        sender=request.data["sender"],
+                        group_name=request.data['group_name'],
+                        time=request.data["time"],
+                    )
+                )
+                self.client.login_socket.send(Response().to_json())
 
 
 class SocketBalancer:
@@ -104,10 +125,16 @@ class Client:
         self.chat_listener.toggle_chat_listening()
 
     def save_private_message(self, private_message: PrivateMessage):
-        pass
+        private_message.save()
 
     def save_group_message(self, group_message: GroupMessage):
-        pass
+        group_message.save()
+
+    def show_private_messages(self):
+        PrivateMessage.show_messages()
+
+    def show_group_messages(self, group_name):
+        GroupMessage.show_messages(group_name)
 
     def run(self):
         while True:

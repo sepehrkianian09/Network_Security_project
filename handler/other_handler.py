@@ -1,7 +1,7 @@
 from db_server.group import Group
 from db_server.user import User, UserAuthentication
 from handler.connection_pool import ConnectionPool
-from messaging import Request, RequestType, Response
+from messaging import Request, RequestType, Response, ResponseType
 from sockets.interfaces import Socket
 
 
@@ -78,9 +78,46 @@ class OtherHandler:
                     )
                     response = Response(data={"members": group_member_names})
                     self.socket.send(response.to_json())
-        elif request.type == RequestType.show_chats:
-            pass
         elif request.type == RequestType.send_private_message:
-            pass
+            if UserAuthentication.auth_exists(request.auth_token):
+                user = UserAuthentication.find_auth(request.auth_token).user
+                other_client_request = Request(
+                    type=RequestType.send_private_message,
+                    data={
+                        "sender": user.name,
+                        "content": request.data["content"],
+                        "time": request.data["time"],
+                    },
+                )
+                other_client_socket = ConnectionPool.instance().get_connection(
+                    request.data["receiver_name"]
+                )
+                other_client_socket.send(other_client_request)
+                response: "Response" = Response.schema().loads(
+                    other_client_socket.receive(1024)
+                )
+                if response.type == ResponseType.success:
+                    self.socket.send(Response().to_json())
         elif request.type == RequestType.send_group_message:
-            pass
+            if UserAuthentication.auth_exists(request.auth_token):
+                user = UserAuthentication.find_auth(request.auth_token).user
+                group = Group.find_group_by_name(request.data["group_name"])
+                for member in group.members:
+                    if member != user:
+                        other_client_request = Request(
+                            type=RequestType.send_group_message,
+                            data={
+                                "group_name": group.name,
+                                "time": request.data["time"],
+                                "sender": user.name,
+                                "content": request.data["content"],
+                            },
+                        )
+                        other_client_socket = ConnectionPool.instance().get_connection(
+                            member.name
+                        )
+                        other_client_socket.send(other_client_request)
+                        response: "Response" = Response.schema().loads(
+                            other_client_socket.receive(1024)
+                        )
+                self.socket.send(Response().to_json())
