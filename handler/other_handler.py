@@ -56,6 +56,28 @@ class OtherHandler:
                 if group in user_groups:
                     response = Response(data={"is_admin": group.admin == user})
                     self.socket.send(response.to_json())
+        elif request.type == RequestType.add_user:
+            if UserAuthentication.auth_exists(request.auth_token):
+                user = UserAuthentication.find_auth(request.auth_token).user
+                group = Group.find_group_by_name(request.data["group_name"])
+                user_groups = Group.find_groups_by_user(user=user)
+                if group in user_groups:
+                    if user == group.admin:
+                        other_member = User.find_user_by_name(request.data["user_name"])
+                        group.add_member(other_member)
+                        self.socket.send(Response().to_json())
+        elif request.type == RequestType.show_members:
+            if UserAuthentication.auth_exists(request.auth_token):
+                user = UserAuthentication.find_auth(request.auth_token).user
+                group = Group.find_group_by_name(request.data["group_name"])
+                user_groups = Group.find_groups_by_user(user=user)
+                if group in user_groups:
+                    group_members = group.members
+                    group_member_names = list(
+                        map(lambda user: user.name, group_members)
+                    )
+                    response = Response(data={"members": group_member_names})
+                    self.socket.send(response.to_json())
         elif request.type == RequestType.show_chats:
             pass
         elif request.type == RequestType.send_private_message:
